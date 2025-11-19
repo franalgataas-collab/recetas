@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Dieta para Bajar de Peso</title>
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #4CAF50;
+            --accent-color: #FF9800;
+            --light-color: #f9f9f9;
+            --dark-color: #333;
+            --breakfast-color: #FFEB3B;
+            --lunch-color: #4CAF50;
+            --snack-color: #FF9800;
+            --dinner-color: #2196F3;
+            --water-color: #03A9F4;
+            --exercise-color: #9C27B0;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--dark-color);
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--primary-color);
+        }
+        
+        .current-month {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .calendar-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        
+        .calendar {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+        
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .day {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            min-height: 120px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .day:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        
+        .day.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .day-number {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            text-align: right;
+        }
+        
+        .event {
+            margin-bottom: 2px;
+            padding: 3px 5px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        
+        .breakfast {
+            background-color: var(--breakfast-color);
+        }
+        
+        .lunch {
+            background-color: var(--lunch-color);
+            color: white;
+        }
+        
+        .snack {
+            background-color: var(--snack-color);
+            color: white;
+        }
+        
+        .dinner {
+            background-color: var(--dinner-color);
+            color: white;
+        }
+        
+        .water {
+            background-color: var(--water-color);
+            color: white;
+        }
+        
+        .exercise {
+            background-color: var(--exercise-color);
+            color: white;
+        }
+        
+        .details-panel {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        .details-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: var(--primary-color);
+        }
+        
+        .time-slot {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        
+        .time-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .time {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .meal-type {
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: white;
+        }
+        
+        .meal-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .meal-description {
+            font-size: 0.9rem;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+        
+        .empty-day {
+            background-color: #f9f9f9;
+            border: 1px dashed #ddd;
+        }
+        
+        @media (max-width: 768px) {
+            .calendar-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar-days {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            
+            .day {
+                min-height: 80px;
+                padding: 5px;
+            }
+            
+            .event {
+                font-size: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calendario de Dieta para Bajar de Peso</h1>
+            <p class="subtitle">Plan nutricional de 3 meses para pérdida de peso controlada</p>
+        </header>
+        
+        <div class="calendar-controls">
+            <div class="month-nav">
+                <button id="prev-month">← Mes Anterior</button>
+                <div class="current-month" id="current-month">Mes Actual</div>
+                <button id="next-month">Mes Siguiente →</button>
+            </div>
+            <button id="today-btn">Hoy</button>
+        </div>
+        
+        <div class="calendar-container">
+            <div class="calendar">
+                <div class="calendar-header">
+                    <div>Lun</div>
+                    <div>Mar</div>
+                    <div>Mié</div>
+                    <div>Jue</div>
+                    <div>Vie</div>
+                    <div>Sáb</div>
+                    <div>Dom</div>
+                </div>
+                <div class="calendar-days" id="calendar-days">
+                    <!-- Los días se generarán con JavaScript -->
+                </div>
+            </div>
+            
+            <div class="details-panel">
+                <div class="details-header">
+                    <h2 id="details-date">Fecha Seleccionada</h2>
+                </div>
+                <div id="time-slots">
+                    <!-- Los horarios y detalles de comidas se generarán con JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color breakfast"></div>
+                <span>Desayuno</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color lunch"></div>
+                <span>Almuerzo</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color snack"></div>
+                <span>Merienda</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color dinner"></div>
+                <span>Cena</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color water"></div>
+                <span>Agua</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color exercise"></div>
+                <span>Ejercicio</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo para las comidas
+        const mealData = {
+            breakfast: {
+                title: "Desayuno Energético",
+                description: "Batido de proteína con espinacas, 1/2 taza de avena, 1 cucharada de semillas de chía y 1 manzana."
+            },
+            lunch: {
+                title: "Almuerzo Balanceado",
+                description: "Ensalada de quinoa con pollo a la plancha, verduras mixtas (lechuga, zanahoria, pepino) y aderezo de yogur natural."
+            },
+            snack: {
+                title: "Merienda Saludable",
+                description: "1 yogur griego sin azúcar con un puñado de frutos rojos y 5 almendras."
+            },
+            dinner: {
+                title: "Cena Ligera",
+                description: "Salmón al horno con espárragos y brócoli al vapor. 1/2 batata cocida."
+            },
+            water: {
+                title: "Hidratación",
+                description: "Recuerda beber 2 vasos de agua. Puedes añadir una rodaja de limón o pepino para dar sabor."
+            },
+            exercise: {
+                title: "Actividad Física",
+                description: "30 minutos de caminata rápida o 20 minutos de entrenamiento de fuerza."
+            }
+        };
+
+        // Horarios fijos
+        const schedule = [
+            { time: "07:00", type: "breakfast", title: "Desayuno" },
+            { time: "08:00", type: "water", title: "Agua" },
+            { time: "10:00", type: "water", title: "Agua" },
+            { time: "12:00", type: "exercise", title: "Ejercicio" },
+            { time: "13:00", type: "lunch", title: "Almuerzo" },
+            { time: "15:00", type: "water", title: "Agua" },
+            { time: "16:30", type: "snack", title: "Merienda" },
+            { time: "17:00", type: "water", title: "Agua" },
+            { time: "20:00", type: "water", title: "Agua" },
+            { time: "20:30", type: "dinner", title: "Cena" }
+        ];
+
+        let currentDate = new Date();
+        let selectedDate = new Date();
+
+        // Inicializar el calendario
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCalendar(currentDate);
+            updateDetailsPanel(selectedDate);
+            
+            // Event listeners para los botones
+            document.getElementById('prev-month').addEventListener('click', function() {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar(currentDate);
+            });
+            
+            document.getElementById('next-month').addEventListener('click', function() {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar(currentDate);
+            });
+            
+            document.getElementById('today-btn').addEventListener('click', function() {
+                currentDate = new Date();
+                selectedDate = new Date();
+                renderCalendar(currentDate);
+                updateDetailsPanel(selectedDate);
+            });
+        });
+
+        function renderCalendar(date) {
+            const calendarDays = document.getElementById('calendar-days');
+            const currentMonthElement = document.getElementById('current-month');
+            
+            // Actualizar el título del mes
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                               "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            currentMonthElement.textContent = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+            
+            // Limpiar el calendario
+            calendarDays.innerHTML = '';
+            
+            // Obtener el primer día del mes y el último día del mes
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            
+            // Obtener el día de la semana del primer día (0 = Domingo, 1 = Lunes, etc.)
+            let firstDayOfWeek = firstDay.getDay();
+            // Ajustar para que la semana empiece en lunes
+            firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+            
+            // Añadir días vacíos al principio si es necesario
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'day empty-day';
+                calendarDays.appendChild(emptyDay);
+            }
+            
+            // Añadir los días del mes
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day';
+                
+                // Marcar el día actual
+                const currentDay = new Date(date.getFullYear(), date.getMonth(), day);
+                if (currentDay.toDateString() === selectedDate.toDateString()) {
+                    dayElement.classList.add('active');
+                }
+                
+                // Marcar hoy
+                const today = new Date();
+                if (currentDay.toDateString() === today.toDateString()) {
+                    dayElement.style.border = '2px solid var(--accent-color)';
+                }
+                
+                dayElement.innerHTML = `<span class="day-number">${day}</span>`;
+                
+                // Añadir eventos del día
+                addEventsToDay(dayElement, day);
+                
+                // Añadir evento de clic
+                dayElement.addEventListener('click', function() {
+                    // Remover la clase active de todos los días
+                    document.querySelectorAll('.day').forEach(d => {
+                        d.classList.remove('active');
+                    });
+                    
+                    // Añadir la clase active al día seleccionado
+                    dayElement.classList.add('active');
+                    
+                    // Actualizar la fecha seleccionada
+                    selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
+                    updateDetailsPanel(selectedDate);
+                });
+                
+                calendarDays.appendChild(dayElement);
+            }
+        }
+
+        function addEventsToDay(dayElement, day) {
+            // Solo añadir algunos eventos para no saturar la vista
+            const eventsToShow = [
+                { time: "07:00", type: "breakfast", text: "Desayuno" },
+                { time: "13:00", type: "lunch", text: "Almuerzo" },
+                { time: "16:30", type: "snack", text: "Merienda" },
+                { time: "20:30", type: "dinner", text: "Cena" }
+            ];
+            
+            // Variar ligeramente los eventos según el día para hacerlo más interesante
+            if (day % 3 === 0) {
+                eventsToShow.push({ time: "12:00", type: "exercise", text: "Ejercicio" });
+            }
+            
+            eventsToShow.forEach(event => {
+                const eventElement = document.createElement('div');
+                eventElement.className = `event ${event.type}`;
+                eventElement.textContent = `${event.time} - ${event.text}`;
+                dayElement.appendChild(eventElement);
+            });
+        }
+
+        function updateDetailsPanel(date) {
+            const detailsDate = document.getElementById('details-date');
+            const timeSlots = document.getElementById('time-slots');
+            
+            // Actualizar la fecha en el panel
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            detailsDate.textContent = date.toLocaleDateString('es-ES', options);
+            
+            // Limpiar los slots de tiempo
+            timeSlots.innerHTML = '';
+            
+            // Añadir cada horario y comida
+            schedule.forEach(slot => {
+                const timeSlotElement = document.createElement('div');
+                timeSlotElement.className = 'time-slot';
+                
+                const mealInfo = mealData[slot.type];
+                
+                timeSlotElement.innerHTML = `
+                    <div class="time-header">
+                        <div class="time">${slot.time}</div>
+                        <div class="meal-type ${slot.type}">${slot.title}</div>
+                    </div>
+                    <div class="meal-title">${mealInfo.title}</div>
+                    <div class="meal-description">${mealInfo.description}</div>
+                `;
+                
+                timeSlots.appendChild(timeSlotElement);
+            });
+        }
+    </script>
+</body>
+</html>
