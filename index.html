@@ -3,548 +3,1060 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario de Dieta para Bajar de Peso</title>
+    <title>Planificador de Comidas - 3 Semanas</title>
     <style>
         :root {
-            --primary-color: #2E7D32;
-            --secondary-color: #4CAF50;
-            --accent-color: #FF9800;
-            --light-color: #f9f9f9;
-            --dark-color: #333;
-            --breakfast-color: #FFEB3B;
-            --lunch-color: #4CAF50;
-            --snack-color: #FF9800;
-            --dinner-color: #2196F3;
-            --water-color: #03A9F4;
-            --exercise-color: #9C27B0;
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --secondary: #FF9800;
+            --light: #f9f9f9;
+            --dark: #333;
+            --gray: #e0e0e0;
+            --text: #424242;
         }
         
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
             background-color: #f5f5f5;
-            color: var(--dark-color);
+            color: var(--text);
             line-height: 1.6;
-            padding: 20px;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
         
         header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 0;
             text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 30px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         h1 {
-            color: var(--primary-color);
+            font-size: 2.2rem;
             margin-bottom: 10px;
         }
         
         .subtitle {
-            color: var(--dark-color);
-            font-weight: normal;
-            margin-bottom: 20px;
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
         
-        .calendar-controls {
+        .tabs {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            background-color: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .month-nav {
-            display: flex;
-            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
             gap: 10px;
         }
         
-        button {
-            background-color: var(--secondary-color);
-            color: white;
+        .tab {
+            padding: 12px 24px;
+            background-color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
+            border-radius: 50px;
+            font-weight: 600;
             cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: var(--dark);
         }
         
-        button:hover {
-            background-color: var(--primary-color);
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
         }
         
-        .current-month {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
-        .calendar-container {
+        .content-section {
+            display: none;
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray);
+        }
+        
+        .week-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        .week-btn {
+            padding: 10px 20px;
+            background-color: var(--light);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .week-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .meal-plan {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
         
-        .calendar {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 15px;
-        }
-        
-        .calendar-header {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 10px;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .calendar-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-        }
-        
-        .day {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            min-height: 120px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .day:hover {
-            background-color: #f0f0f0;
-            transform: translateY(-2px);
-        }
-        
-        .day.active {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-        
-        .day-number {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-            text-align: right;
-        }
-        
-        .event {
-            margin-bottom: 2px;
-            padding: 3px 5px;
-            border-radius: 3px;
-            font-size: 0.7rem;
-            cursor: pointer;
-        }
-        
-        .breakfast {
-            background-color: var(--breakfast-color);
-        }
-        
-        .lunch {
-            background-color: var(--lunch-color);
-            color: white;
-        }
-        
-        .snack {
-            background-color: var(--snack-color);
-            color: white;
-        }
-        
-        .dinner {
-            background-color: var(--dinner-color);
-            color: white;
-        }
-        
-        .water {
-            background-color: var(--water-color);
-            color: white;
-        }
-        
-        .exercise {
-            background-color: var(--exercise-color);
-            color: white;
-        }
-        
-        .details-panel {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .day-card {
+            background-color: var(--light);
+            border-radius: 12px;
             padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
         }
         
-        .details-header {
+        .day-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .day-title {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
             text-align: center;
-            margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            color: var(--primary-color);
+            border-bottom: 1px solid var(--gray);
         }
         
-        .time-slot {
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-        
-        .time-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .time {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .meal-type {
-            padding: 3px 8px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            color: white;
+        .meal {
+            margin-bottom: 15px;
         }
         
         .meal-title {
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--secondary);
             margin-bottom: 5px;
-        }
-        
-        .meal-description {
-            font-size: 0.9rem;
-        }
-        
-        .legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-        
-        .legend-item {
             display: flex;
             align-items: center;
-            margin-right: 15px;
         }
         
-        .legend-color {
-            width: 15px;
-            height: 15px;
-            margin-right: 5px;
-            border-radius: 3px;
+        .meal-title i {
+            margin-right: 8px;
         }
         
-        .empty-day {
-            background-color: #f9f9f9;
-            border: 1px dashed #ddd;
+        .meal-desc {
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+        
+        .recipe-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .recipe-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .recipe-img {
+            height: 180px;
+            background-color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .recipe-content {
+            padding: 20px;
+        }
+        
+        .recipe-title {
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+        
+        .recipe-desc {
+            font-size: 0.95rem;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+        
+        .recipe-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .tag {
+            background-color: var(--light);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--dark);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .shopping-list {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .category {
+            margin-bottom: 25px;
+        }
+        
+        .category-title {
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gray);
+        }
+        
+        .ingredient {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+        }
+        
+        .ingredient input {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+        
+        .tips-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .tip-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .tip-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: var(--text);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--gray);
         }
         
         @media (max-width: 768px) {
-            .calendar-container {
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .week-selector {
+                flex-wrap: wrap;
+            }
+            
+            .meal-plan {
                 grid-template-columns: 1fr;
-            }
-            
-            .calendar-days {
-                grid-template-columns: repeat(7, 1fr);
-            }
-            
-            .day {
-                min-height: 80px;
-                padding: 5px;
-            }
-            
-            .event {
-                font-size: 0.6rem;
             }
         }
     </style>
 </head>
 <body>
+    <header>
+        <div class="container">
+            <h1>Planificador de Comidas - 3 Semanas</h1>
+            <p class="subtitle">Transforma tu alimentación con este plan completo y saludable</p>
+        </div>
+    </header>
+    
     <div class="container">
-        <header>
-            <h1>Calendario de Dieta para Bajar de Peso</h1>
-            <p class="subtitle">Plan nutricional de 3 meses para pérdida de peso controlada</p>
-        </header>
-        
-        <div class="calendar-controls">
-            <div class="month-nav">
-                <button id="prev-month">← Mes Anterior</button>
-                <div class="current-month" id="current-month">Mes Actual</div>
-                <button id="next-month">Mes Siguiente →</button>
-            </div>
-            <button id="today-btn">Hoy</button>
+        <div class="tabs">
+            <button class="tab active" data-tab="plan">Plan Semanal</button>
+            <button class="tab" data-tab="recipes">Recetas</button>
+            <button class="tab" data-tab="shopping">Lista de Compra</button>
+            <button class="tab" data-tab="tips">Consejos</button>
         </div>
         
-        <div class="calendar-container">
-            <div class="calendar">
-                <div class="calendar-header">
-                    <div>Lun</div>
-                    <div>Mar</div>
-                    <div>Mié</div>
-                    <div>Jue</div>
-                    <div>Vie</div>
-                    <div>Sáb</div>
-                    <div>Dom</div>
+        <!-- PLAN SEMANAL -->
+        <div id="plan" class="content-section active">
+            <h2>Plan de Comidas Semanal</h2>
+            
+            <div class="week-selector">
+                <button class="week-btn active" data-week="1">Semana 1</button>
+                <button class="week-btn" data-week="2">Semana 2</button>
+                <button class="week-btn" data-week="3">Semana 3</button>
+            </div>
+            
+            <div class="meal-plan" id="week1">
+                <!-- Día 1 -->
+                <div class="day-card">
+                    <h3 class="day-title">Lunes</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Batido verde energético: espinacas, plátano, proteína en polvo, semillas de chía y leche de almendras</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Ensalada de quinoa y pollo con tomate, pepino y aderezo de yogur</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Crema de calabacín y brócoli con jengibre</div>
+                    </div>
                 </div>
-                <div class="calendar-days" id="calendar-days">
-                    <!-- Los días se generarán con JavaScript -->
+                
+                <!-- Día 2 -->
+                <div class="day-card">
+                    <h3 class="day-title">Martes</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Avena con frutos rojos, miel y almendras fileteadas</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Salmón al horno con brócoli al vapor y batata asada</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Tortilla de espinacas y champiñones</div>
+                    </div>
+                </div>
+                
+                <!-- Día 3 -->
+                <div class="day-card">
+                    <h3 class="day-title">Miércoles</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Tostadas de aguacate con huevo duro en rodajas</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Wrap de pavo y aguacate con lechuga y tomate</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Pescado al vapor con espárragos salteados con ajo</div>
+                    </div>
+                </div>
+                
+                <!-- Día 4 -->
+                <div class="day-card">
+                    <h3 class="day-title">Jueves</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Yogur griego natural con granola sin azúcar y frutas frescas</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Bowl de lentejas con zanahoria, espinacas, aguacate y semillas</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Ensalada de garbanzos con atún, pimiento y cebolla morada</div>
+                    </div>
+                </div>
+                
+                <!-- Día 5 -->
+                <div class="day-card">
+                    <h3 class="day-title">Viernes</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Revuelto de huevos con espinacas, champiñones y cebolla</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Pescado a la plancha con ensalada mixta y vinagreta ligera</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Calabacín horneado relleno de quinoa y champiñones</div>
+                    </div>
+                </div>
+                
+                <!-- Día 6 -->
+                <div class="day-card">
+                    <h3 class="day-title">Sábado</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Pudín de chía con leche de almendras y frutos rojos</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Ensalada César saludable con pollo y crutones integrales</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Sopa casera de pollo con verduras (baja en sal)</div>
+                    </div>
+                </div>
+                
+                <!-- Día 7 -->
+                <div class="day-card">
+                    <h3 class="day-title">Domingo</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Batido de proteína con plátano y mantequilla de cacahuete</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Guiso de lentejas con verduras y carne magra</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Ensalada verde con nueces y queso feta</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="details-panel">
-                <div class="details-header">
-                    <h2 id="details-date">Fecha Seleccionada</h2>
+            <div class="meal-plan" id="week2" style="display: none;">
+                <!-- Contenido de la semana 2 -->
+                <div class="day-card">
+                    <h3 class="day-title">Lunes - Semana 2</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Smoothie bowl con frutas tropicales y coco rallado</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Tacos de vegetales con frijoles, pimiento y guacamole</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Crema de zanahoria y jengibre</div>
+                    </div>
                 </div>
-                <div id="time-slots">
-                    <!-- Los horarios y detalles de comidas se generarán con JavaScript -->
+                
+                <!-- Más días de la semana 2 -->
+                <div class="day-card">
+                    <h3 class="day-title">Martes - Semana 2</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Tortitas de avena con frutos del bosque</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Pechuga de pollo rellena de espinacas y queso feta</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Ensalada de salmón ahumado con aguacate</div>
+                    </div>
+                </div>
+                
+                <!-- Resto de días de la semana 2 -->
+                <div class="day-card">
+                    <h3 class="day-title">Miércoles - Semana 2</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Huevos revueltos con aguacate y tomate</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Ensalada de garbanzos asados con verduras</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Sopa miso con tofu y algas</div>
+                    </div>
+                </div>
+                
+                <div class="day-card">
+                    <h3 class="day-title">Jueves - Semana 2</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Yogur con granola y frutos secos</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Pasta integral con pesto de albahaca y tomates cherry</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Ensalada de quinoa con verduras asadas</div>
+                    </div>
+                </div>
+                
+                <div class="day-card">
+                    <h3 class="day-title">Viernes - Semana 2</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Batido de proteína con espinacas y plátano</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Hamburguesa de lentejas con batatas fritas al horno</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Ensalada caprese con mozzarella de búfala</div>
+                    </div>
+                </div>
+                
+                <div class="day-card">
+                    <h3 class="day-title">Sábado - Semana 2</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Tostadas francesas saludables con frutas</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Pizza casera integral con verduras</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Sopa de verduras con fideos de calabacín</div>
+                    </div>
+                </div>
+                
+                <div class="day-card">
+                    <h3 class="day-title">Domingo - Semana 2</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Avena durante la noche con frutos rojos</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Pollo al curry con arroz integral</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Ensalada de aguacate y tomate con vinagreta de limón</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="meal-plan" id="week3" style="display: none;">
+                <!-- Contenido de la semana 3 -->
+                <div class="day-card">
+                    <h3 class="day-title">Lunes - Semana 3</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Batido verde con espinacas, piña y jengibre</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Ensalada de salmón a la plancha con quinoa</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Crema de espárragos con almendras laminadas</div>
+                    </div>
+                </div>
+                
+                <!-- Más días de la semana 3 -->
+                <div class="day-card">
+                    <h3 class="day-title">Martes - Semana 3</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Tortilla de claras con espinacas y tomate</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Berenjenas rellenas de carne magra y tomate</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Ensalada de rúcula con pera y nueces</div>
+                    </div>
+                </div>
+                
+                <!-- Resto de días de la semana 3 -->
+                <div class="day-card">
+                    <h3 class="day-title">Miércoles - Semana 3</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Pudín de chía con cacao y frambuesas</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Wrap de pollo con hummus y verduras</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Sopa de calabaza asada</div>
+                    </div>
+                </div>
+                
+                <div class="day-card">
+                    <h3 class="day-title">Jueves - Semana 3</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Avena con manzana y canela</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Ensalada de garbanzos con verduras asadas</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Revuelto de setas con ajo y perejil</div>
+                    </div>
+                </div>
+                
+                <div class="day-card">
+                    <h3 class="day-title">Viernes - Semana 3</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Smoothie de mango y coco</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Pescado al horno con patatas y pimientos</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Ensalada de espinacas con fresas y almendras</div>
+                    </div>
+                </div>
+                
+                <div class="day-card">
+                    <h3 class="day-title">Sábado - Semana 3</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Tostadas integrales con aguacate y huevo poché</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Hamburguesa de quinoa con ensalada</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Sopa de cebolla (versión light)</div>
+                    </div>
+                </div>
+                
+                <div class="day-card">
+                    <h3 class="day-title">Domingo - Semana 3</h3>
+                    <div class="meal">
+                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-desc">Yogur con muesli casero y frutos rojos</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-desc">Pollo al limón con espárragos trigueros</div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-title">Cena</div>
+                        <div class="meal-desc">Ensalada de aguacate, tomate y cebolla morada</div>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color breakfast"></div>
-                <span>Desayuno</span>
+        <!-- RECETAS -->
+        <div id="recipes" class="content-section">
+            <h2>Recetas Detalladas</h2>
+            
+            <div class="recipe-list">
+                <!-- Receta 1 -->
+                <div class="recipe-card">
+                    <div class="recipe-img" style="background-color: #C8E6C9;">Batido Verde Energético</div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Batido Verde Energético</h3>
+                        <p class="recipe-desc">Ideal para comenzar el día con energía y nutrientes.</p>
+                        <div class="recipe-tags">
+                            <span class="tag">Desayuno</span>
+                            <span class="tag">Vegano</span>
+                            <span class="tag">Rápido</span>
+                        </div>
+                        <a href="#" class="btn">Ver Receta Completa</a>
+                    </div>
+                </div>
+                
+                <!-- Receta 2 -->
+                <div class="recipe-card">
+                    <div class="recipe-img" style="background-color: #FFF9C4;">Ensalada de Quinoa y Pollo</div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Ensalada de Quinoa y Pollo</h3>
+                        <p class="recipe-desc">Completa y nutritiva, perfecta para el almuerzo.</p>
+                        <div class="recipe-tags">
+                            <span class="tag">Almuerzo</span>
+                            <span class="tag">Proteína</span>
+                            <span class="tag">Ensalada</span>
+                        </div>
+                        <a href="#" class="btn">Ver Receta Completa</a>
+                    </div>
+                </div>
+                
+                <!-- Receta 3 -->
+                <div class="recipe-card">
+                    <div class="recipe-img" style="background-color: #FFCCBC;">Salmón al Horno</div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Salmón al Horno con Verduras</h3>
+                        <p class="recipe-desc">Rico en omega-3 y antioxidantes, muy saludable.</p>
+                        <div class="recipe-tags">
+                            <span class="tag">Almuerzo</span>
+                            <span class="tag">Pescado</span>
+                            <span class="tag">Horno</span>
+                        </div>
+                        <a href="#" class="btn">Ver Receta Completa</a>
+                    </div>
+                </div>
+                
+                <!-- Receta 4 -->
+                <div class="recipe-card">
+                    <div class="recipe-img" style="background-color: #D1C4E9;">Crema de Calabacín</div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Crema de Calabacín y Brócoli</h3>
+                        <p class="recipe-desc">Ligera y depurativa, ideal para la cena.</p>
+                        <div class="recipe-tags">
+                            <span class="tag">Cena</span>
+                            <span class="tag">Vegano</span>
+                            <span class="tag">Crema</span>
+                        </div>
+                        <a href="#" class="btn">Ver Receta Completa</a>
+                    </div>
+                </div>
+                
+                <!-- Receta 5 -->
+                <div class="recipe-card">
+                    <div class="recipe-img" style="background-color: #B3E5FC;">Wrap de Pavo</div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Wrap de Pavo y Aguacate</h3>
+                        <p class="recipe-desc">Fácil de preparar y llevar, perfecto para días ocupados.</p>
+                        <div class="recipe-tags">
+                            <span class="tag">Almuerzo</span>
+                            <span class="tag">Rápido</span>
+                            <span class="tag">Para llevar</span>
+                        </div>
+                        <a href="#" class="btn">Ver Receta Completa</a>
+                    </div>
+                </div>
+                
+                <!-- Receta 6 -->
+                <div class="recipe-card">
+                    <div class="recipe-img" style="background-color: #C5E1A5;">Tortilla de Espinacas</div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Tortilla de Espinacas</h3>
+                        <p class="recipe-desc">Cena ligera y nutritiva, rica en proteínas.</p>
+                        <div class="recipe-tags">
+                            <span class="tag">Cena</span>
+                            <span class="tag">Proteína</span>
+                            <span class="tag">Vegetariano</span>
+                        </div>
+                        <a href="#" class="btn">Ver Receta Completa</a>
+                    </div>
+                </div>
             </div>
-            <div class="legend-item">
-                <div class="legend-color lunch"></div>
-                <span>Almuerzo</span>
+        </div>
+        
+        <!-- LISTA DE COMPRA -->
+        <div id="shopping" class="content-section">
+            <h2>Lista de Compra Semanal</h2>
+            
+            <div class="shopping-list">
+                <div class="category">
+                    <h3 class="category-title">Frutas y Verduras</h3>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item1">
+                        <label for="item1">Espinacas (2 bolsas)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item2">
+                        <label for="item2">Brócoli (1 unidad)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item3">
+                        <label for="item3">Calabacín (3 unidades)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item4">
+                        <label for="item4">Tomates (6 unidades)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item5">
+                        <label for="item5">Aguacates (4 unidades)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item6">
+                        <label for="item6">Plátanos (6 unidades)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item7">
+                        <label for="item7">Frutos rojos (congelados, 1 bolsa)</label>
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <h3 class="category-title">Proteínas</h3>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item8">
+                        <label for="item8">Pechuga de pollo (600g)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item9">
+                        <label for="item9">Salmón (2 filetes)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item10">
+                        <label for="item10">Pavo en lonchas (200g)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item11">
+                        <label for="item11">Huevos (12 unidades)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item12">
+                        <label for="item12">Yogur griego natural (4 unidades)</label>
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <h3 class="category-title">Granos y Legumbres</h3>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item13">
+                        <label for="item13">Quinoa (1 paquete)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item14">
+                        <label for="item14">Avena en hojuelas (1 paquete)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item15">
+                        <label for="item15">Lentejas (1 paquete)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item16">
+                        <label for="item16">Tortillas integrales (1 paquete)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item17">
+                        <label for="item17">Pan integral (1 barra)</label>
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <h3 class="category-title">Otros</h3>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item18">
+                        <label for="item18">Leche de almendras (1 litro)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item19">
+                        <label for="item19">Semillas de chía (1 bolsa)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item20">
+                        <label for="item20">Aceite de oliva virgen extra</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item21">
+                        <label for="item21">Miel (1 frasco)</label>
+                    </div>
+                    <div class="ingredient">
+                        <input type="checkbox" id="item22">
+                        <label for="item22">Almendras fileteadas (1 bolsa)</label>
+                    </div>
+                </div>
             </div>
-            <div class="legend-item">
-                <div class="legend-color snack"></div>
-                <span>Merienda</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color dinner"></div>
-                <span>Cena</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color water"></div>
-                <span>Agua</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color exercise"></div>
-                <span>Ejercicio</span>
+        </div>
+        
+        <!-- CONSEJOS -->
+        <div id="tips" class="content-section">
+            <h2>Consejos para el Éxito</h2>
+            
+            <div class="tips-list">
+                <div class="tip-card">
+                    <span class="tip-number">1</span>
+                    <strong>Bebe agua con limón en ayunas</strong> para activar tu metabolismo y depurar el organismo.
+                </div>
+                
+                <div class="tip-card">
+                    <span class="tip-number">2</span>
+                    <strong>Mastica bien cada bocado</strong> y come sin prisa para mejorar la digestión y sentir saciedad.
+                </div>
+                
+                <div class="tip-card">
+                    <span class="tip-number">3</span>
+                    <strong>Incluye proteína en cada comida</strong> para mantener la saciedad y preservar la masa muscular.
+                </div>
+                
+                <div class="tip-card">
+                    <span class="tip-number">4</span>
+                    <strong>Prefiere cocciones al vapor, horno o plancha</strong> para conservar nutrientes y reducir calorías.
+                </div>
+                
+                <div class="tip-card">
+                    <span class="tip-number">5</span>
+                    <strong>Realiza 30 minutos de actividad física diaria</strong> para acelerar el metabolismo y mejorar tu salud.
+                </div>
+                
+                <div class="tip-card">
+                    <span class="tip-number">6</span>
+                    <strong>Evita alimentos procesados y azúcares refinados</strong> que aportan calorías vacías y afectan tu salud.
+                </div>
+                
+                <div class="tip-card">
+                    <span class="tip-number">7</span>
+                    <strong>Incluye verduras de hoja verde en tus comidas</strong> por su alto contenido en vitaminas y minerales.
+                </div>
+                
+                <div class="tip-card">
+                    <span class="tip-number">8</span>
+                    <strong>Toma infusiones de jengibre o té verde</strong> para acelerar el metabolismo y mejorar la digestión.
+                </div>
+                
+                <div class="tip-card">
+                    <span class="tip-number">9</span>
+                    <strong>Planifica tus comidas con anticipación</strong> para evitar decisiones impulsivas poco saludables.
+                </div>
+                
+                <div class="tip-card">
+                    <span class="tip-number">10</span>
+                    <strong>Duerme al menos 7-8 horas cada noche</strong> para regular las hormonas del apetito y la energía.
+                </div>
             </div>
         </div>
     </div>
+    
+    <footer>
+        <div class="container">
+            <p>Planificador de Comidas - 3 Semanas © 2023 | Diseñado para una alimentación saludable y equilibrada</p>
+        </div>
+    </footer>
 
     <script>
-        // Datos de ejemplo para las comidas
-        const mealData = {
-            breakfast: {
-                title: "Desayuno Energético",
-                description: "Batido de proteína con espinacas, 1/2 taza de avena, 1 cucharada de semillas de chía y 1 manzana."
-            },
-            lunch: {
-                title: "Almuerzo Balanceado",
-                description: "Ensalada de quinoa con pollo a la plancha, verduras mixtas (lechuga, zanahoria, pepino) y aderezo de yogur natural."
-            },
-            snack: {
-                title: "Merienda Saludable",
-                description: "1 yogur griego sin azúcar con un puñado de frutos rojos y 5 almendras."
-            },
-            dinner: {
-                title: "Cena Ligera",
-                description: "Salmón al horno con espárragos y brócoli al vapor. 1/2 batata cocida."
-            },
-            water: {
-                title: "Hidratación",
-                description: "Recuerda beber 2 vasos de agua. Puedes añadir una rodaja de limón o pepino para dar sabor."
-            },
-            exercise: {
-                title: "Actividad Física",
-                description: "30 minutos de caminata rápida o 20 minutos de entrenamiento de fuerza."
-            }
-        };
-
-        // Horarios fijos
-        const schedule = [
-            { time: "07:00", type: "breakfast", title: "Desayuno" },
-            { time: "08:00", type: "water", title: "Agua" },
-            { time: "10:00", type: "water", title: "Agua" },
-            { time: "12:00", type: "exercise", title: "Ejercicio" },
-            { time: "13:00", type: "lunch", title: "Almuerzo" },
-            { time: "15:00", type: "water", title: "Agua" },
-            { time: "16:30", type: "snack", title: "Merienda" },
-            { time: "17:00", type: "water", title: "Agua" },
-            { time: "20:00", type: "water", title: "Agua" },
-            { time: "20:30", type: "dinner", title: "Cena" }
-        ];
-
-        let currentDate = new Date();
-        let selectedDate = new Date();
-
-        // Inicializar el calendario
-        document.addEventListener('DOMContentLoaded', function() {
-            renderCalendar(currentDate);
-            updateDetailsPanel(selectedDate);
-            
-            // Event listeners para los botones
-            document.getElementById('prev-month').addEventListener('click', function() {
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                renderCalendar(currentDate);
-            });
-            
-            document.getElementById('next-month').addEventListener('click', function() {
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                renderCalendar(currentDate);
-            });
-            
-            document.getElementById('today-btn').addEventListener('click', function() {
-                currentDate = new Date();
-                selectedDate = new Date();
-                renderCalendar(currentDate);
-                updateDetailsPanel(selectedDate);
-            });
-        });
-
-        function renderCalendar(date) {
-            const calendarDays = document.getElementById('calendar-days');
-            const currentMonthElement = document.getElementById('current-month');
-            
-            // Actualizar el título del mes
-            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                               "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-            currentMonthElement.textContent = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-            
-            // Limpiar el calendario
-            calendarDays.innerHTML = '';
-            
-            // Obtener el primer día del mes y el último día del mes
-            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-            
-            // Obtener el día de la semana del primer día (0 = Domingo, 1 = Lunes, etc.)
-            let firstDayOfWeek = firstDay.getDay();
-            // Ajustar para que la semana empiece en lunes
-            firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
-            
-            // Añadir días vacíos al principio si es necesario
-            for (let i = 0; i < firstDayOfWeek; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'day empty-day';
-                calendarDays.appendChild(emptyDay);
-            }
-            
-            // Añadir los días del mes
-            for (let day = 1; day <= lastDay.getDate(); day++) {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'day';
-                
-                // Marcar el día actual
-                const currentDay = new Date(date.getFullYear(), date.getMonth(), day);
-                if (currentDay.toDateString() === selectedDate.toDateString()) {
-                    dayElement.classList.add('active');
-                }
-                
-                // Marcar hoy
-                const today = new Date();
-                if (currentDay.toDateString() === today.toDateString()) {
-                    dayElement.style.border = '2px solid var(--accent-color)';
-                }
-                
-                dayElement.innerHTML = `<span class="day-number">${day}</span>`;
-                
-                // Añadir eventos del día
-                addEventsToDay(dayElement, day);
-                
-                // Añadir evento de clic
-                dayElement.addEventListener('click', function() {
-                    // Remover la clase active de todos los días
-                    document.querySelectorAll('.day').forEach(d => {
-                        d.classList.remove('active');
-                    });
-                    
-                    // Añadir la clase active al día seleccionado
-                    dayElement.classList.add('active');
-                    
-                    // Actualizar la fecha seleccionada
-                    selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
-                    updateDetailsPanel(selectedDate);
+        // Funcionalidad de pestañas
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remover clase active de todas las pestañas
+                document.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('active');
                 });
                 
-                calendarDays.appendChild(dayElement);
-            }
-        }
-
-        function addEventsToDay(dayElement, day) {
-            // Solo añadir algunos eventos para no saturar la vista
-            const eventsToShow = [
-                { time: "07:00", type: "breakfast", text: "Desayuno" },
-                { time: "13:00", type: "lunch", text: "Almuerzo" },
-                { time: "16:30", type: "snack", text: "Merienda" },
-                { time: "20:30", type: "dinner", text: "Cena" }
-            ];
-            
-            // Variar ligeramente los eventos según el día para hacerlo más interesante
-            if (day % 3 === 0) {
-                eventsToShow.push({ time: "12:00", type: "exercise", text: "Ejercicio" });
-            }
-            
-            eventsToShow.forEach(event => {
-                const eventElement = document.createElement('div');
-                eventElement.className = `event ${event.type}`;
-                eventElement.textContent = `${event.time} - ${event.text}`;
-                dayElement.appendChild(eventElement);
+                // Añadir clase active a la pestaña clickeada
+                tab.classList.add('active');
+                
+                // Ocultar todas las secciones de contenido
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Mostrar la sección correspondiente
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
             });
-        }
-
-        function updateDetailsPanel(date) {
-            const detailsDate = document.getElementById('details-date');
-            const timeSlots = document.getElementById('time-slots');
-            
-            // Actualizar la fecha en el panel
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            detailsDate.textContent = date.toLocaleDateString('es-ES', options);
-            
-            // Limpiar los slots de tiempo
-            timeSlots.innerHTML = '';
-            
-            // Añadir cada horario y comida
-            schedule.forEach(slot => {
-                const timeSlotElement = document.createElement('div');
-                timeSlotElement.className = 'time-slot';
+        });
+        
+        // Funcionalidad de selector de semanas
+        document.querySelectorAll('.week-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remover clase active de todos los botones de semana
+                document.querySelectorAll('.week-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
                 
-                const mealInfo = mealData[slot.type];
+                // Añadir clase active al botón clickeado
+                btn.classList.add('active');
                 
-                timeSlotElement.innerHTML = `
-                    <div class="time-header">
-                        <div class="time">${slot.time}</div>
-                        <div class="meal-type ${slot.type}">${slot.title}</div>
-                    </div>
-                    <div class="meal-title">${mealInfo.title}</div>
-                    <div class="meal-description">${mealInfo.description}</div>
-                `;
+                // Ocultar todos los planes semanales
+                document.querySelectorAll('.meal-plan').forEach(plan => {
+                    plan.style.display = 'none';
+                });
                 
-                timeSlots.appendChild(timeSlotElement);
+                // Mostrar el plan semanal correspondiente
+                const weekId = btn.getAttribute('data-week');
+                document.getElementById('week' + weekId).style.display = 'grid';
             });
-        }
+        });
+        
+        // Funcionalidad para marcar elementos de la lista de compra
+        document.querySelectorAll('.ingredient input').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if(this.checked) {
+                    this.parentElement.style.textDecoration = 'line-through';
+                    this.parentElement.style.opacity = '0.7';
+                } else {
+                    this.parentElement.style.textDecoration = 'none';
+                    this.parentElement.style.opacity = '1';
+                }
+            });
+        });
     </script>
 </body>
 </html>
