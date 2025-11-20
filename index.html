@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planificador de Comidas - 3 Semanas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #4CAF50;
@@ -316,6 +317,118 @@
             font-weight: bold;
         }
         
+        /* Modal para recetas completas */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.4s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--dark);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: var(--primary);
+        }
+        
+        .modal-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray);
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+        
+        .modal-subtitle {
+            color: var(--text);
+            font-size: 1.1rem;
+        }
+        
+        .modal-section {
+            margin-bottom: 25px;
+        }
+        
+        .modal-section-title {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .modal-section-title i {
+            margin-right: 10px;
+        }
+        
+        .ingredients-list, .steps-list {
+            padding-left: 20px;
+        }
+        
+        .ingredients-list li, .steps-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .nutrition-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .nutrition-item {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .nutrition-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .nutrition-label {
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        
         footer {
             text-align: center;
             padding: 20px;
@@ -342,6 +455,12 @@
             
             .meal-plan {
                 grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                margin: 20px auto;
             }
         }
     </style>
@@ -377,15 +496,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Lunes</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Batido verde energético: espinacas, plátano, proteína en polvo, semillas de chía y leche de almendras</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Ensalada de quinoa y pollo con tomate, pepino y aderezo de yogur</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Crema de calabacín y brócoli con jengibre</div>
                     </div>
                 </div>
@@ -394,15 +513,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Martes</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Avena con frutos rojos, miel y almendras fileteadas</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Salmón al horno con brócoli al vapor y batata asada</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Tortilla de espinacas y champiñones</div>
                     </div>
                 </div>
@@ -411,15 +530,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Miércoles</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Tostadas de aguacate con huevo duro en rodajas</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Wrap de pavo y aguacate con lechuga y tomate</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Pescado al vapor con espárragos salteados con ajo</div>
                     </div>
                 </div>
@@ -428,15 +547,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Jueves</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Yogur griego natural con granola sin azúcar y frutas frescas</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Bowl de lentejas con zanahoria, espinacas, aguacate y semillas</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Ensalada de garbanzos con atún, pimiento y cebolla morada</div>
                     </div>
                 </div>
@@ -445,15 +564,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Viernes</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Revuelto de huevos con espinacas, champiñones y cebolla</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Pescado a la plancha con ensalada mixta y vinagreta ligera</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Calabacín horneado relleno de quinoa y champiñones</div>
                     </div>
                 </div>
@@ -462,15 +581,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Sábado</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Pudín de chía con leche de almendras y frutos rojos</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Ensalada César saludable con pollo y crutones integrales</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Sopa casera de pollo con verduras (baja en sal)</div>
                     </div>
                 </div>
@@ -479,15 +598,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Domingo</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Batido de proteína con plátano y mantequilla de cacahuete</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Guiso de lentejas con verduras y carne magra</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Ensalada verde con nueces y queso feta</div>
                     </div>
                 </div>
@@ -498,15 +617,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Lunes - Semana 2</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Smoothie bowl con frutas tropicales y coco rallado</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Tacos de vegetales con frijoles, pimiento y guacamole</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Crema de zanahoria y jengibre</div>
                     </div>
                 </div>
@@ -515,15 +634,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Martes - Semana 2</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Tortitas de avena con frutos del bosque</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Pechuga de pollo rellena de espinacas y queso feta</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Ensalada de salmón ahumado con aguacate</div>
                     </div>
                 </div>
@@ -532,15 +651,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Miércoles - Semana 2</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Huevos revueltos con aguacate y tomate</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Ensalada de garbanzos asados con verduras</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Sopa miso con tofu y algas</div>
                     </div>
                 </div>
@@ -548,15 +667,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Jueves - Semana 2</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Yogur con granola y frutos secos</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Pasta integral con pesto de albahaca y tomates cherry</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Ensalada de quinoa con verduras asadas</div>
                     </div>
                 </div>
@@ -564,15 +683,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Viernes - Semana 2</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Batido de proteína con espinacas y plátano</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Hamburguesa de lentejas con batatas fritas al horno</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Ensalada caprese con mozzarella de búfala</div>
                     </div>
                 </div>
@@ -580,15 +699,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Sábado - Semana 2</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Tostadas francesas saludables con frutas</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Pizza casera integral con verduras</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Sopa de verduras con fideos de calabacín</div>
                     </div>
                 </div>
@@ -596,15 +715,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Domingo - Semana 2</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Avena durante la noche con frutos rojos</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Pollo al curry con arroz integral</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Ensalada de aguacate y tomate con vinagreta de limón</div>
                     </div>
                 </div>
@@ -615,15 +734,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Lunes - Semana 3</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Batido verde con espinacas, piña y jengibre</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Ensalada de salmón a la plancha con quinoa</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Crema de espárragos con almendras laminadas</div>
                     </div>
                 </div>
@@ -632,15 +751,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Martes - Semana 3</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Tortilla de claras con espinacas y tomate</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Berenjenas rellenas de carne magra y tomate</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Ensalada de rúcula con pera y nueces</div>
                     </div>
                 </div>
@@ -649,15 +768,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Miércoles - Semana 3</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Pudín de chía con cacao y frambuesas</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Wrap de pollo con hummus y verduras</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Sopa de calabaza asada</div>
                     </div>
                 </div>
@@ -665,15 +784,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Jueves - Semana 3</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Avena con manzana y canela</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Ensalada de garbanzos con verduras asadas</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Revuelto de setas con ajo y perejil</div>
                     </div>
                 </div>
@@ -681,15 +800,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Viernes - Semana 3</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Smoothie de mango y coco</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Pescado al horno con patatas y pimientos</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Ensalada de espinacas con fresas y almendras</div>
                     </div>
                 </div>
@@ -697,15 +816,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Sábado - Semana 3</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Tostadas integrales con aguacate y huevo poché</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Hamburguesa de quinoa con ensalada</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Sopa de cebolla (versión light)</div>
                     </div>
                 </div>
@@ -713,15 +832,15 @@
                 <div class="day-card">
                     <h3 class="day-title">Domingo - Semana 3</h3>
                     <div class="meal">
-                        <div class="meal-title">Desayuno</div>
+                        <div class="meal-title"><i class="fas fa-egg"></i> Desayuno</div>
                         <div class="meal-desc">Yogur con muesli casero y frutos rojos</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Almuerzo</div>
+                        <div class="meal-title"><i class="fas fa-utensils"></i> Almuerzo</div>
                         <div class="meal-desc">Pollo al limón con espárragos trigueros</div>
                     </div>
                     <div class="meal">
-                        <div class="meal-title">Cena</div>
+                        <div class="meal-title"><i class="fas fa-moon"></i> Cena</div>
                         <div class="meal-desc">Ensalada de aguacate, tomate y cebolla morada</div>
                     </div>
                 </div>
@@ -744,7 +863,7 @@
                             <span class="tag">Vegano</span>
                             <span class="tag">Rápido</span>
                         </div>
-                        <a href="#" class="btn">Ver Receta Completa</a>
+                        <button class="btn view-recipe" data-recipe="1">Ver Receta Completa</button>
                     </div>
                 </div>
                 
@@ -759,7 +878,7 @@
                             <span class="tag">Proteína</span>
                             <span class="tag">Ensalada</span>
                         </div>
-                        <a href="#" class="btn">Ver Receta Completa</a>
+                        <button class="btn view-recipe" data-recipe="2">Ver Receta Completa</button>
                     </div>
                 </div>
                 
@@ -774,7 +893,7 @@
                             <span class="tag">Pescado</span>
                             <span class="tag">Horno</span>
                         </div>
-                        <a href="#" class="btn">Ver Receta Completa</a>
+                        <button class="btn view-recipe" data-recipe="3">Ver Receta Completa</button>
                     </div>
                 </div>
                 
@@ -789,7 +908,7 @@
                             <span class="tag">Vegano</span>
                             <span class="tag">Crema</span>
                         </div>
-                        <a href="#" class="btn">Ver Receta Completa</a>
+                        <button class="btn view-recipe" data-recipe="4">Ver Receta Completa</button>
                     </div>
                 </div>
                 
@@ -804,7 +923,7 @@
                             <span class="tag">Rápido</span>
                             <span class="tag">Para llevar</span>
                         </div>
-                        <a href="#" class="btn">Ver Receta Completa</a>
+                        <button class="btn view-recipe" data-recipe="5">Ver Receta Completa</button>
                     </div>
                 </div>
                 
@@ -819,7 +938,7 @@
                             <span class="tag">Proteína</span>
                             <span class="tag">Vegetariano</span>
                         </div>
-                        <a href="#" class="btn">Ver Receta Completa</a>
+                        <button class="btn view-recipe" data-recipe="6">Ver Receta Completa</button>
                     </div>
                 </div>
             </div>
@@ -994,6 +1113,38 @@
         </div>
     </div>
     
+    <!-- Modal para recetas completas -->
+    <div id="recipeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalRecipeTitle">Título de la Receta</h2>
+                <p class="modal-subtitle" id="modalRecipeDesc">Descripción de la receta</p>
+            </div>
+            
+            <div class="modal-section">
+                <h3 class="modal-section-title"><i class="fas fa-list-ul"></i> Ingredientes</h3>
+                <ul class="ingredients-list" id="modalIngredients">
+                    <!-- Los ingredientes se cargarán aquí -->
+                </ul>
+            </div>
+            
+            <div class="modal-section">
+                <h3 class="modal-section-title"><i class="fas fa-mortar-pestle"></i> Preparación</h3>
+                <ol class="steps-list" id="modalSteps">
+                    <!-- Los pasos se cargarán aquí -->
+                </ol>
+            </div>
+            
+            <div class="modal-section">
+                <h3 class="modal-section-title"><i class="fas fa-apple-alt"></i> Información Nutricional (por porción)</h3>
+                <div class="nutrition-info" id="modalNutrition">
+                    <!-- La información nutricional se cargará aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <footer>
         <div class="container">
             <p>Planificador de Comidas - 3 Semanas © 2023 | Diseñado para una alimentación saludable y equilibrada</p>
@@ -1001,6 +1152,195 @@
     </footer>
 
     <script>
+        // Base de datos de recetas completas
+        const recipes = {
+            1: {
+                title: "Batido Verde Energético",
+                description: "Ideal para comenzar el día con energía y nutrientes. Este batido es rico en vitaminas, minerales y antioxidantes.",
+                ingredients: [
+                    "1 taza de espinacas frescas",
+                    "1/2 plátano maduro",
+                    "1 scoop de proteína en polvo (vainilla o sin sabor)",
+                    "1 cucharada de semillas de chía",
+                    "1 taza de leche de almendras sin azúcar",
+                    "1/2 taza de hielo (opcional)",
+                    "1 cucharadita de miel o sirope de arce (opcional)"
+                ],
+                steps: [
+                    "Lava bien las espinacas y colócalas en la licuadora.",
+                    "Añade el plátano en trozos, la proteína en polvo y las semillas de chía.",
+                    "Vierte la leche de almendras y el hielo si lo estás usando.",
+                    "Licúa hasta obtener una textura suave y homogénea.",
+                    "Prueba y ajusta el dulzor si es necesario añadiendo miel o sirope.",
+                    "Sirve inmediatamente y disfruta."
+                ],
+                nutrition: [
+                    { value: "250", label: "Calorías" },
+                    { value: "22g", label: "Proteína" },
+                    { value: "28g", label: "Carbohidratos" },
+                    { value: "8g", label: "Grasas" },
+                    { value: "7g", label: "Fibra" }
+                ]
+            },
+            2: {
+                title: "Ensalada de Quinoa y Pollo",
+                description: "Completa y nutritiva, perfecta para el almuerzo. Combina proteínas magras con carbohidratos complejos.",
+                ingredients: [
+                    "1 taza de quinoa cocida",
+                    "200g de pechuga de pollo a la plancha",
+                    "1 pepino mediano",
+                    "2 tomates medianos",
+                    "1/4 de cebolla morada",
+                    "2 cucharadas de perejil fresco picado",
+                    "3 cucharadas de yogur griego natural",
+                    "1 cucharada de aceite de oliva",
+                    "Jugo de 1/2 limón",
+                    "Sal y pimienta al gusto"
+                ],
+                steps: [
+                    "Cocina la quinoa según las instrucciones del paquete y deja enfriar.",
+                    "Corta el pollo a la plancha en tiras o cubos.",
+                    "Pica el pepino, tomates y cebolla morada en cubos pequeños.",
+                    "En un bol grande, mezcla la quinoa, el pollo y las verduras.",
+                    "Prepara el aderezo mezclando el yogur, aceite de oliva, jugo de limón, sal y pimienta.",
+                    "Vierte el aderezo sobre la ensalada y mezcla bien.",
+                    "Decora con perejil fresco picado y sirve."
+                ],
+                nutrition: [
+                    { value: "380", label: "Calorías" },
+                    { value: "30g", label: "Proteína" },
+                    { value: "42g", label: "Carbohidratos" },
+                    { value: "10g", label: "Grasas" },
+                    { value: "6g", label: "Fibra" }
+                ]
+            },
+            3: {
+                title: "Salmón al Horno con Verduras",
+                description: "Rico en omega-3 y antioxidantes, muy saludable. Una comida completa y deliciosa.",
+                ingredients: [
+                    "2 filetes de salmón (150g cada uno)",
+                    "1 batata mediana",
+                    "1 cabeza de brócoli",
+                    "2 cucharadas de aceite de oliva",
+                    "2 dientes de ajo picados",
+                    "1 limón",
+                    "1 cucharadita de eneldo seco",
+                    "Sal y pimienta al gusto"
+                ],
+                steps: [
+                    "Precalienta el horno a 200°C.",
+                    "Lava y corta la batata en cubos y el brócoli en floretes.",
+                    "En una bandeja para horno, coloca las verduras y rocía con 1 cucharada de aceite de oliva, sal y pimienta.",
+                    "Hornea las verduras durante 15 minutos.",
+                    "Mientras tanto, sazona los filetes de salmón con sal, pimienta y eneldo.",
+                    "Retira la bandeja del horno, coloca el salmón sobre las verduras y rocía con el resto del aceite y el ajo picado.",
+                    "Hornea por 12-15 minutos más hasta que el salmón esté cocido.",
+                    "Sirve con gajos de limón."
+                ],
+                nutrition: [
+                    { value: "420", label: "Calorías" },
+                    { value: "35g", label: "Proteína" },
+                    { value: "32g", label: "Carbohidratos" },
+                    { value: "18g", label: "Grasas" },
+                    { value: "7g", label: "Fibra" }
+                ]
+            },
+            4: {
+                title: "Crema de Calabacín y Brócoli",
+                description: "Ligera y depurativa, ideal para la cena. Una sopa cremosa sin necesidad de añadir nata.",
+                ingredients: [
+                    "2 calabacines medianos",
+                    "1 cabeza de brócoli",
+                    "1 cebolla",
+                    "2 dientes de ajo",
+                    "4 tazas de caldo de verduras",
+                    "1 cucharadita de jengibre rallado",
+                    "2 cucharadas de aceite de oliva",
+                    "Sal, pimienta y nuez moscada al gusto",
+                    "Semillas de calabaza para decorar (opcional)"
+                ],
+                steps: [
+                    "Pica la cebolla y el ajo. Corta los calabacines y el brócoli en trozos.",
+                    "En una olla grande, calienta el aceite y sofríe la cebolla y el ajo hasta que estén transparentes.",
+                    "Añade el calabacín y el brócoli, y cocina por 5 minutos.",
+                    "Vierte el caldo de verduras y añade el jengibre rallado.",
+                    "Cocina a fuego medio durante 15-20 minutos hasta que las verduras estén tiernas.",
+                    "Tritura con una batidora de mano hasta obtener una textura cremosa.",
+                    "Sazona con sal, pimienta y nuez moscada al gusto.",
+                    "Sirve caliente decorado con semillas de calabaza."
+                ],
+                nutrition: [
+                    { value: "150", label: "Calorías" },
+                    { value: "6g", label: "Proteína" },
+                    { value: "18g", label: "Carbohidratos" },
+                    { value: "7g", label: "Grasas" },
+                    { value: "5g", label: "Fibra" }
+                ]
+            },
+            5: {
+                title: "Wrap de Pavo y Aguacate",
+                description: "Fácil de preparar y llevar, perfecto para días ocupados. Una opción saludable y saciante.",
+                ingredients: [
+                    "2 tortillas integrales grandes",
+                    "200g de pechuga de pavo en lonchas",
+                    "1 aguacate maduro",
+                    "1 tomate",
+                    "Un puñado de lechuga variada",
+                    "1 cucharada de mostaza Dijon",
+                    "1 cucharada de yogur griego",
+                    "Jugo de 1/2 limón",
+                    "Sal y pimienta al gusto"
+                ],
+                steps: [
+                    "En un bol pequeño, mezcla la mostaza y el yogur griego para hacer la salsa.",
+                    "Extiende las tortillas y unta la mezcla de mostaza y yogur por toda la superficie.",
+                    "Tritura el aguacate con un tenedor y sazona con sal, pimienta y jugo de limón.",
+                    "Extiende el aguacate sobre las tortillas.",
+                    "Coloca las lonchas de pavo, la lechuga lavada y el tomate en rodajas.",
+                    "Enrolla las tortillas firmemente, doblando los extremos hacia dentro.",
+                    "Corta por la mitad y sirve inmediatamente o envuelve para llevar."
+                ],
+                nutrition: [
+                    { value: "320", label: "Calorías" },
+                    { value: "25g", label: "Proteína" },
+                    { value: "28g", label: "Carbohidratos" },
+                    { value: "14g", label: "Grasas" },
+                    { value: "8g", label: "Fibra" }
+                ]
+            },
+            6: {
+                title: "Tortilla de Espinacas",
+                description: "Cena ligera y nutritiva, rica en proteínas. Una opción vegetariana deliciosa y fácil de preparar.",
+                ingredients: [
+                    "4 huevos",
+                    "2 tazas de espinacas frescas",
+                    "1/2 cebolla",
+                    "1 diente de ajo",
+                    "1/4 taza de queso feta desmenuzado",
+                    "1 cucharada de aceite de oliva",
+                    "Sal, pimienta y pimentón al gusto"
+                ],
+                steps: [
+                    "Lava bien las espinacas y pícalas gruesamente. Pica la cebolla y el ajo.",
+                    "En un bol, bate los huevos con sal, pimienta y pimentón.",
+                    "En una sartén antiadherente, calienta el aceite y sofríe la cebolla y el ajo hasta que estén dorados.",
+                    "Añade las espinacas y cocina hasta que se ablanden (2-3 minutos).",
+                    "Vierte los huevos batidos sobre las verduras en la sartén.",
+                    "Espolvorea el queso feta por encima.",
+                    "Cocina a fuego medio-bajo durante 5-7 minutos hasta que los bordes estén cocidos.",
+                    "Voltea la tortilla con cuidado y cocina por el otro lado 2-3 minutos más.",
+                    "Sirve caliente acompañada de una ensalada verde."
+                ],
+                nutrition: [
+                    { value: "280", label: "Calorías" },
+                    { value: "20g", label: "Proteína" },
+                    { value: "6g", label: "Carbohidratos" },
+                    { value: "20g", label: "Grasas" },
+                    { value: "2g", label: "Fibra" }
+                ]
+            }
+        };
+
         // Funcionalidad de pestañas
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
@@ -1056,6 +1396,72 @@
                     this.parentElement.style.opacity = '1';
                 }
             });
+        });
+        
+        // Funcionalidad para mostrar recetas completas
+        const modal = document.getElementById('recipeModal');
+        const closeModal = document.querySelector('.close-modal');
+        const modalTitle = document.getElementById('modalRecipeTitle');
+        const modalDesc = document.getElementById('modalRecipeDesc');
+        const modalIngredients = document.getElementById('modalIngredients');
+        const modalSteps = document.getElementById('modalSteps');
+        const modalNutrition = document.getElementById('modalNutrition');
+        
+        document.querySelectorAll('.view-recipe').forEach(button => {
+            button.addEventListener('click', function() {
+                const recipeId = this.getAttribute('data-recipe');
+                const recipe = recipes[recipeId];
+                
+                if (recipe) {
+                    modalTitle.textContent = recipe.title;
+                    modalDesc.textContent = recipe.description;
+                    
+                    // Limpiar listas anteriores
+                    modalIngredients.innerHTML = '';
+                    modalSteps.innerHTML = '';
+                    modalNutrition.innerHTML = '';
+                    
+                    // Agregar ingredientes
+                    recipe.ingredients.forEach(ingredient => {
+                        const li = document.createElement('li');
+                        li.textContent = ingredient;
+                        modalIngredients.appendChild(li);
+                    });
+                    
+                    // Agregar pasos
+                    recipe.steps.forEach(step => {
+                        const li = document.createElement('li');
+                        li.textContent = step;
+                        modalSteps.appendChild(li);
+                    });
+                    
+                    // Agregar información nutricional
+                    recipe.nutrition.forEach(nut => {
+                        const div = document.createElement('div');
+                        div.className = 'nutrition-item';
+                        div.innerHTML = `
+                            <div class="nutrition-value">${nut.value}</div>
+                            <div class="nutrition-label">${nut.label}</div>
+                        `;
+                        modalNutrition.appendChild(div);
+                    });
+                    
+                    // Mostrar modal
+                    modal.style.display = 'block';
+                }
+            });
+        });
+        
+        // Cerrar modal al hacer clic en la X
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // Cerrar modal al hacer clic fuera del contenido
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
         });
     </script>
 </body>
